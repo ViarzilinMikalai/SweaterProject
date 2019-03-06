@@ -27,14 +27,16 @@
             <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
             <button type="submit">Найти</button>
         </form>
-        {{#messages}}
-            <div>
+        <table>
+            {{#messages}}
+                <tr>
 
-                <b>{{id}}</b>
-                <span>{{text}}</span>
-                <i>{{tag}}</i>
-            </div>
-        {{/messages}}
-
+                    <td>{{id}}</td>
+                    <td>{{text}}</td>
+                    <td>{{tag}}</td>
+                    <td>{{authorName}}</td>
+                </tr>
+            {{/messages}}
+        </table>
     </body>
 </html>

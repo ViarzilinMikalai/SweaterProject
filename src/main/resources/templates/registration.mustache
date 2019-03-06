@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Spring Security Example </title>
 </head>
 <body>
 <h1>Add new User</h1>
 {{#message}}
-    <div style="strong">{{message}}</div>
+    <strong>{{message}}</strong>
 {{/message}}
 <form action="/registration" method="post">
     <div><label> User Name : <input type="text" name="username"/> </label></div>
