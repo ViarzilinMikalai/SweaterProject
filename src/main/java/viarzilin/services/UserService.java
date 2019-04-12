@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import viarzilin.domain.Roles;
@@ -22,13 +23,19 @@ public class UserService implements UserDetailsService {
     @Autowired
     private MailSenderService mailSenderService;
 
-//    public UserService(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+
+        User user = userRepository.findByUsername(username);
+
+        if (user == null){
+            throw new UsernameNotFoundException("User not found!");
+        }
+
+        return user;
     }
 
     public boolean addUser(User user){
@@ -41,6 +48,7 @@ public class UserService implements UserDetailsService {
         user.setActive(true);
         user.setRoles(Collections.singleton(Roles.USER));
         user.setActivationCode(UUID.randomUUID().toString());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
 
@@ -52,7 +60,9 @@ public class UserService implements UserDetailsService {
     private void sendMessage(User user) {
         if(!StringUtils.isEmpty(user.getEmail())){
             String message = String.format(
-                    "Hello %s \n" + "Welcom to Sweater! Please visit next link: http://localhost:8080/activate/%s",
+
+                    "Hello, %s! \n" +
+                            "Welcome to Sweater. Please, visit next link: http://localhost:8080/activate/%s",
                     user.getUsername(),
                     user.getActivationCode()
             );
@@ -63,15 +73,15 @@ public class UserService implements UserDetailsService {
     public boolean activateUser(String code) {
         User user = userRepository.findByActivationCode(code);
 
-        if(user == null){
+        if (user == null) {
             return false;
+        } else {
+
+            user.setActivationCode(null);
+            userRepository.save(user );
+
+            return true;
         }
-
-        user.setActivationCode(null);
-
-        userRepository.save(user);
-
-        return true;
     }
 
     public List<User> findAll() {
@@ -99,7 +109,7 @@ public class UserService implements UserDetailsService {
     public void updateProfile(User user, String password, String email) {
         String userEmail = user.getEmail();
 
-        boolean isEmailChanged = (email !=null && email.equals(userEmail) || userEmail !=null && !userEmail.equals(email));
+        boolean isEmailChanged = (email !=null && !email.equals(userEmail) || userEmail !=null && !userEmail.equals(email));
 
         if(isEmailChanged){
             user.setEmail(email);
@@ -108,8 +118,8 @@ public class UserService implements UserDetailsService {
             }
         }
 
-        if (StringUtils.isEmpty(password)){
-            user.setPassword(password);
+        if (!StringUtils.isEmpty(password)){
+            user.setPassword(passwordEncoder.encode(password));
         }
 
         userRepository.save(user);
