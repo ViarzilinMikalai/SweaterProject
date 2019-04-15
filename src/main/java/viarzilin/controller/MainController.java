@@ -17,16 +17,13 @@ import viarzilin.domain.User;
 import viarzilin.repository.MessageRepository;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
 
 
 @Controller
 public class MainController {
 
-    Logger logger = LoggerFactory.getLogger(MainController.class);
 
     @Autowired
     private MessageRepository messageRepository;
@@ -71,20 +68,7 @@ public class MainController {
             model.mergeAttributes(errorsMap);
             model.addAttribute("message", message);
         } else {
-            if (file != null && !file.getOriginalFilename().isEmpty()) {
-                File uploadDir = new File(uploadPath);
-
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdirs();
-                }
-
-                String uuidFile = UUID.randomUUID().toString();
-                String resultFilename = uuidFile + "." + file.getOriginalFilename();
-
-                file.transferTo(new File(uploadPath + "/" + resultFilename));
-
-                message.setFilename(resultFilename);
-            }
+            ControllerUtils.saveFile(message, file, uploadPath);
 
             model.addAttribute("message", null);
             messageRepository.save(message);
@@ -96,5 +80,4 @@ public class MainController {
 
         return "main";
     }
-
 }
