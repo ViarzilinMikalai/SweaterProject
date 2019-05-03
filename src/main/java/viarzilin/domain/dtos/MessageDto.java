@@ -1,11 +1,15 @@
 package viarzilin.domain.dtos;
 
+import lombok.Getter;
+import lombok.ToString;
 import viarzilin.domain.Message;
 import viarzilin.domain.User;
 import viarzilin.domain.util.MessageHelper;
 
 import java.util.Objects;
 
+@Getter
+@ToString
 public class MessageDto {
     private Long id;
     private String text;
@@ -15,33 +19,6 @@ public class MessageDto {
     private Long likes;
     boolean meLiked;
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public Long getLikes() {
-        return likes;
-    }
-
-    public boolean isMeLiked() {
-        return meLiked;
-    }
 
     public MessageDto(Message message, Long likes, boolean meLiked) {
         this.id = message.getId();
@@ -53,10 +30,10 @@ public class MessageDto {
         this.meLiked = meLiked;
     }
 
-    public String getAuthorName(){
-        return MessageHelper.getAuthorName(author);
-    }
 
+    public boolean isMeLiked() {
+        return meLiked;
+    }
     @Override
     public String toString() {
         return "MessageDto{" +
@@ -66,4 +43,34 @@ public class MessageDto {
                 ", meLiked=" + meLiked +
                 '}';
     }
+
+    //    public String getAuthorName(){
+//        return MessageHelper.getAuthorName(author);
+//    }
+//
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public String getText() {
+//        return text;
+//    }
+//
+//    public String getTag() {
+//        return tag;
+//    }
+//
+//    public User getAuthor() {
+//        return author;
+//    }
+//
+//    public String getFilename() {
+//        return filename;
+//    }
+//
+//    public Long getLikes() {
+//        return likes;
+//    }
+
+
 }
