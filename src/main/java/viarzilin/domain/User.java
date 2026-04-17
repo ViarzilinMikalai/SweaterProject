@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -103,86 +102,4 @@ public class User implements UserDetails{
     public int hashCode() {
         return Objects.hash(Id);
     }
-
-
-
-/*Getters and Setters**/
-
-//     public Long getId() {
-//        return Id;
-//    }
-//
-//    public void setId(Long id) {
-//        Id = id;
-//    }
-//
-//    public String getUsername() {
-//        return username;
-//    }
-//
-//    public void setUsername(String username) {
-//      this.username = username;
-//    }
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    public String getActivationCode() {
-//        return activationCode;
-//    }
-//
-//    public void setActivationCode(String activationCode) {
-//        this.activationCode = activationCode;
-//    }
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    public boolean isActive() {
-//        return active;
-//    }
-//
-//    public void setActive(boolean active) {
-//        this.active = active;
-//    }
-//
-//    public Set<Roles> getRoles() {
-//        return roles;
-//    }
-//
-//    public void setRoles(Set<Roles> roles) {
-//        this.roles = roles;
-//    }
-//
-//    public Set<Message> getMessages() {
-//        return messages;
-//    }
-//
-//    public void setMessages(Set<Message> messages) {
-//        this.messages = messages;
-//    }
-//
-//    public Set<User> getSubscribers() {
-//        return subscribers;
-//    }
-//
-//    public void setSubscribers(Set<User> subscribers) {
-//        this.subscribers = subscribers;
-//    }
-//
-//    public Set<User> getSubscriptions() {
-//        return subscriptions;
-//    }
-//
-//    public void setSubscriptions(Set<User> subscriptions) {
-//        this.subscriptions = subscriptions;
-//    }
 }
