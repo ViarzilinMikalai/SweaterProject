@@ -22,7 +22,7 @@ import viarzilin.domain.dtos.MessageDto;
 import viarzilin.repository.MessageRepository;
 import viarzilin.services.MessageService;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;

@@ -15,7 +15,7 @@ import viarzilin.domain.User;
 import viarzilin.domain.dtos.CaptchaResponseDto;
 import viarzilin.services.UserService;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
 

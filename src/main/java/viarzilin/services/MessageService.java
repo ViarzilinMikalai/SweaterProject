@@ -10,7 +10,7 @@ import viarzilin.domain.User;
 import viarzilin.domain.dtos.MessageDto;
 import viarzilin.repository.MessageRepository;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 @Slf4j
 @Service

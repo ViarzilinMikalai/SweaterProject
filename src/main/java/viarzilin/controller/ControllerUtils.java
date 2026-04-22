@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import viarzilin.domain.Message;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
