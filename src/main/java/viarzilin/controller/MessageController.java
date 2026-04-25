@@ -1,7 +1,7 @@
 package viarzilin.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,6 @@ import viarzilin.domain.dtos.MessageDto;
 import viarzilin.repository.MessageRepository;
 import viarzilin.services.MessageService;
 
-import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -32,14 +32,17 @@ import java.util.Set;
 public class MessageController {
 
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
 
     @Value("${upload.path}")
     private String uploadPath;
+
+    public MessageController(MessageRepository messageRepository, MessageService messageService) {
+        this.messageRepository = messageRepository;
+        this.messageService = messageService;
+    }
 
     @GetMapping("/")
     public String greeting(Map<String, Object> model) {
@@ -67,24 +70,29 @@ public class MessageController {
             @Valid Message message,
             BindingResult bindingResult,
             Model model,
-            @RequestParam("file") MultipartFile file
-        ) throws IOException {
+            @RequestParam("file") MultipartFile file,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable
+    ) throws IOException {
             message.setAuthor(user);
 
             if (bindingResult.hasErrors()){
                 Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
                 model.mergeAttributes(errorsMap);
                 model.addAttribute("message", message);
-        } else {
-            ControllerUtils.saveFile(message, file, uploadPath);
+            } else {
+                ControllerUtils.saveFile(message, file, uploadPath);
 
-            model.addAttribute("message", null);
-            messageRepository.save(message);
-        }
+                model.addAttribute("message", null);
+                messageRepository.save(message);
+            }
 
         Iterable<Message> messages = messageRepository.findAll();
-
         model.addAttribute("messages", messages);
+
+        Page<MessageDto> page = messageService.messageList(pageable, "", user);
+
+        model.addAttribute("page", page);
+        model.addAttribute("url", "/main");
 
         return "main";
     }
@@ -104,12 +112,16 @@ public class MessageController {
             likes.add(currentUser);
         }
 
-        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+        if (StringUtils.hasText(referer)) {
+            UriComponents components;
+            components = UriComponentsBuilder.fromUriString(referer).build();
 
-        components.getQueryParams()
-                .entrySet()
-                .forEach(pair -> redirectAttributes.addAttribute(pair.getKey(), pair.getValue()));
+            // Копируем параметры (для сохранения пагинации/поиска)
+            components.getQueryParams().forEach(redirectAttributes::addAttribute);
 
-        return "redirect:" + components.getPath();
+            return "redirect:" + components.getPath();
+        }
+
+        return "redirect:/main";
     }
 }

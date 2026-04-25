@@ -1,6 +1,6 @@
 package viarzilin.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,30 +15,38 @@ import viarzilin.domain.User;
 import viarzilin.domain.dtos.CaptchaResponseDto;
 import viarzilin.services.UserService;
 
-import jakarta.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class RegistrationController {
 
-    private final static String CAPTCHA_URL= "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
+    private static final String CAPTCHA_URL= "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
+    private static final String REGISTRATION_URL = "/registration";
+    private static final String REGISTRATION = "registration";
+    private static final String MESSAGE_TYPE = "messageType";
+    private static final String MESSAGE = "message";
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Value("${recaptcha.secret}")
     private String secret;
 
-    @Autowired
+    final
     RestTemplate restTemplate;
 
-    @GetMapping("/registration")
-    public String registration() {
-        return "registration";
+    public RegistrationController(UserService userService, RestTemplate restTemplate) {
+        this.userService = userService;
+        this.restTemplate = restTemplate;
     }
 
-    @PostMapping("/registration")
+    @GetMapping(REGISTRATION_URL)
+    public String registration() {
+        return REGISTRATION;
+    }
+
+    @PostMapping(REGISTRATION_URL)
     public String addUser(
             @RequestParam("passwordConfirm") String passwordConfirm,
             @RequestParam("g-recaptcha-response") String captchaResponce,
@@ -49,17 +57,18 @@ public class RegistrationController {
         String url = String.format(CAPTCHA_URL, secret, captchaResponce);
         CaptchaResponseDto captchaResponseDto = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
 
+        assert captchaResponseDto != null;
         if (!captchaResponseDto.success){
             model.addAttribute("captchaError", "Fill Captcha");
         }
 
-        boolean isConfirmEmpty = StringUtils.isEmpty(passwordConfirm);
+        boolean isConfirmEmpty = !StringUtils.hasText(passwordConfirm);
 
         if (isConfirmEmpty) {
             model.addAttribute("passwordConfirmError","Password confirmation can't be empty");
         }
 
-        if (user.getPassword() != null && !user.getPassword().equals(passwordConfirm)){
+        if (user.getPassword() != null && !Objects.equals(user.getPassword(), passwordConfirm)){
             model.addAttribute("passwordError", "Passwords are differents!");
         }
 
@@ -67,16 +76,16 @@ public class RegistrationController {
             Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
 
-            return "registration";
+            return REGISTRATION;
         }
 
         if(!userService.addUser(user)){
             model.addAttribute("usernameError", "User exists!");
 
-            return "registration";
+            return REGISTRATION;
         } else {
-            model.addAttribute("message", "You must activate your account. Activation link sent to your email.");
-            model.addAttribute("messageType", "info");
+            model.addAttribute(MESSAGE, "You must activate your account. Activation link sent to your email.");
+            model.addAttribute(MESSAGE_TYPE, "info");
 
             return "login";
         }
@@ -87,11 +96,11 @@ public class RegistrationController {
         boolean isActivated = userService.activateUser(code);
 
         if(isActivated){
-            model.addAttribute("messageType", "success");
-            model.addAttribute("message", "User successfully activated");
+            model.addAttribute(MESSAGE_TYPE, "success");
+            model.addAttribute(MESSAGE, "User successfully activated");
         } else {
-            model.addAttribute("messageType", "danger");
-            model.addAttribute("message", "Activation code is not found!");
+            model.addAttribute(MESSAGE_TYPE, "danger");
+            model.addAttribute(MESSAGE, "Activation code is not found!");
         }
 
         return "login";

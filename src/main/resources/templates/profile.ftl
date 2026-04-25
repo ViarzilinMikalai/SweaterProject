@@ -3,6 +3,7 @@
 
 <@c.page>
     <h2>${username}</h2>
+    <p></p>
     ${message?ifExists}
     <form method="post">
         <div class="form-group row">

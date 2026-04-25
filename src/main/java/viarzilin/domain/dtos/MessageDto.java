@@ -1,22 +1,17 @@
 package viarzilin.domain.dtos;
 
 import lombok.Getter;
-import lombok.ToString;
 import viarzilin.domain.Message;
 import viarzilin.domain.User;
-import viarzilin.domain.util.MessageHelper;
-
-import java.util.Objects;
 
 @Getter
-@ToString
 public class MessageDto {
-    private Long id;
-    private String text;
-    private String tag;
-    private User author;
-    private String filename;
-    private Long likes;
+    private final Long id;
+    private final String text;
+    private final String tag;
+    private final User author;
+    private final String filename;
+    private final Long likes;
     boolean meLiked;
 
 
@@ -34,6 +29,7 @@ public class MessageDto {
     public boolean isMeLiked() {
         return meLiked;
     }
+
     @Override
     public String toString() {
         return "MessageDto{" +
@@ -43,34 +39,4 @@ public class MessageDto {
                 ", meLiked=" + meLiked +
                 '}';
     }
-
-    //    public String getAuthorName(){
-//        return MessageHelper.getAuthorName(author);
-//    }
-//
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public String getText() {
-//        return text;
-//    }
-//
-//    public String getTag() {
-//        return tag;
-//    }
-//
-//    public User getAuthor() {
-//        return author;
-//    }
-//
-//    public String getFilename() {
-//        return filename;
-//    }
-//
-//    public Long getLikes() {
-//        return likes;
-//    }
-
-
 }

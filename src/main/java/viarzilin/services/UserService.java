@@ -1,6 +1,6 @@
 package viarzilin.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,17 +17,20 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private MailSenderService mailSenderService;
+    private final MailSenderService mailSenderService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, MailSenderService mailSenderService, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.mailSenderService = mailSenderService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
 
         User user = userRepository.findByUsername(username);
 
@@ -58,7 +61,7 @@ public class UserService implements UserDetailsService {
     }
 
     private void sendMessage(User user) {
-        if(!StringUtils.isEmpty(user.getEmail())){
+        if(StringUtils.hasText(user.getEmail())){
             String message = String.format(
 
                     "Hello, %s! \n" +
@@ -97,11 +100,9 @@ public class UserService implements UserDetailsService {
 
         user.getRoles().clear();
 
-        for(String key : form.keySet()){
-            if(roles.contains(key)){
-                user.getRoles().add(Roles.valueOf(key));
-            }
-        }
+        form.keySet().stream()
+                .filter(roles::contains)
+                .forEach(key -> user.getRoles().add(Roles.valueOf(key)));
 
         userRepository.save(user);
     }
@@ -109,16 +110,16 @@ public class UserService implements UserDetailsService {
     public void updateProfile(User user, String password, String email) {
         String userEmail = user.getEmail();
 
-        boolean isEmailChanged = (email !=null && !email.equals(userEmail) || userEmail !=null && !userEmail.equals(email));
+        boolean isEmailChanged = !Objects.equals(email, userEmail);
 
         if(isEmailChanged){
             user.setEmail(email);
-            if(!StringUtils.isEmpty(email)){
+            if(StringUtils.hasText(email)){
                 user.setActivationCode(UUID.randomUUID().toString());
             }
         }
 
-        if (!StringUtils.isEmpty(password)){
+        if (StringUtils.hasText(password)){
             user.setPassword(passwordEncoder.encode(password));
         }
 

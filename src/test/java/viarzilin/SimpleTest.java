@@ -1,21 +1,22 @@
 package viarzilin;
 
-//import org.junit.Assert;
-//import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SimpleTest {
-//    @Test
-//    public void test(){
-//        int x = 2;
-//        int y = 23;
-//
-//        Assert.assertEquals(46, x * y);
-//        Assert.assertEquals(25, x + y);
-//    }
-//
-//    @Test(expected = ArithmeticException.class)
-//    public void error(){
-//        int i = 0;
-//        int i1 = 1/i;
-//    }
+
+    @Test
+    public void test(){
+        int x = 2;
+        int y = 23;
+
+        assertEquals(46, x * y);
+        assertEquals(25, x + y);
+    }
+
+    @Test
+    public void error(){
+        int i = 0;
+        int i1 = 1/i;
+    }
 }
