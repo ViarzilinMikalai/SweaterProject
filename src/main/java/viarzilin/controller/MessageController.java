@@ -70,7 +70,7 @@ public class MessageController {
             @Valid Message message,
             BindingResult bindingResult,
             Model model,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(name = "file", required = false) MultipartFile file,
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable
     ) throws IOException {
             message.setAuthor(user);

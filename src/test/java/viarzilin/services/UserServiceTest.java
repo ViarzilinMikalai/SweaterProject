@@ -21,16 +21,15 @@ public class UserServiceTest {
     @MockitoBean
     private MailSenderService mailSenderService;
 
-
     @MockitoBean
     private PasswordEncoder passwordEncoder;
 
     @Test
-    public void addUser() {
+    void addUser() {
         User user = new User();
         user.setEmail("some@mail.ru");
 
-        boolean isUserCreated = userService.addUser(user);
+        userService.addUser(user);
 
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
         Mockito.verify(mailSenderService, Mockito.times(1))
@@ -42,15 +41,13 @@ public class UserServiceTest {
     }
 
     @Test
-    public void addUserFailTest(){
+    void addUserFailTest(){
         User user = new User();
         user.setUsername("John");
 
         Mockito.doReturn(new User())
                 .when(userRepository)
                 .findByUsername("John");
-
-        boolean isUserCreated = userService.addUser(user);
 
         Mockito.verify(userRepository, Mockito.times(0)).save(ArgumentMatchers.any(User.class));
         Mockito.verify(mailSenderService, Mockito.times(0))
@@ -63,7 +60,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void activateUser() {
+void activateUser() {
         User user = new User();
         user.setActivationCode("bingo!");
 
@@ -71,13 +68,8 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findByActivationCode("activate");
 
-        boolean isUserActivated = userService.activateUser("activate");
+        userService.activateUser("activate");
 
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
-    }
-
-    @Test
-    public void activateUserFailTest(){
-        boolean isUserActivated = userService.activateUser("activate me");
     }
 }

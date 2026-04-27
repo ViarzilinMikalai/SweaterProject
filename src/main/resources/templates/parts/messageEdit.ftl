@@ -29,7 +29,7 @@
                 </div>
             </div>
             <input type="hidden" name="_csrf" value="${_csrf.token}" />
-            <input type="hidden" name="id" value="<#if message??>${message.id}</#if>" />
+            <input type="hidden" name="id" value="${(message.id)!''}" />
             <div class="form-group mt-2">
                 <button type="submit" class="btn btn-primary">Save Message</button>
             </div>

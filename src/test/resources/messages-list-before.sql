@@ -6,4 +6,4 @@ insert into message(id, text, tag, user_id) values
 (3, 'third', 'my-tag', 1),
 (4, 'fourth', 'another', 2);
 
-alter sequence hibernate_sequence restart with 10;
+SELECT setval(pg_get_serial_sequence('message', 'id'), 10, false);

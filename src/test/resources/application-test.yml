@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/sweater
+    url: jdbc:postgresql://localhost:5432/sweater2
     username: postgres
     password: postgres
   servlet:
